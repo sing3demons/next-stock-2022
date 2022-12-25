@@ -9,9 +9,9 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
+import { createTheme, SxProps, Theme, ThemeProvider } from '@mui/material/styles'
 
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm, SubmitHandler, UseFormRegister, UseFormReturn } from 'react-hook-form'
 
 const theme = createTheme()
 
@@ -28,35 +28,31 @@ export default function login({}: Props) {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<Inputs>()
+  }: UseFormReturn<Inputs, any> = useForm<Inputs>()
+
+  const boxStyle = {
+    my: 8,
+    mx: 4,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  }
+
+  const sxGrid: SxProps<Theme> = {
+    backgroundImage: 'url(https://source.unsplash.com/random)',
+    backgroundRepeat: 'no-repeat',
+    backgroundColor: t => (t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900]),
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  }
 
   return (
     <ThemeProvider theme={theme}>
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
-        <Grid
-          item
-          xs={false}
-          sm={4}
-          md={7}
-          sx={{
-            backgroundImage: 'url(https://source.unsplash.com/random)',
-            backgroundRepeat: 'no-repeat',
-            backgroundColor: t => (t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900]),
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
+        <Grid item xs={false} sm={4} md={7} sx={sxGrid} />
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-          <Box
-            sx={{
-              my: 8,
-              mx: 4,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-          >
+          <Box sx={boxStyle}>
             <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
               <LockOutlinedIcon />
             </Avatar>
@@ -101,32 +97,34 @@ const FormLogin = ({ register, handleSubmit, errors, watch }: any) => {
       <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
         Sign In
       </Button>
-      <Grid container>
-        <Grid item xs>
-          <Link href="#" variant="body2">
-            Forgot password?
-          </Link>
-        </Grid>
-        <Grid item>
-          <Link href="#" variant="body2">
-            {"Don't have an account? Sign Up"}
-          </Link>
-        </Grid>
-      </Grid>
+      <LinkToSignUp />
       <Copyright sx={{ mt: 5 }} />
     </Box>
   )
 }
 
-function Copyright(props: any) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+const LinkToSignUp = () => (
+  <Grid container>
+    <Grid item xs>
+      <Link href="#" variant="body2">
+        Forgot password?
       </Link>
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  )
-}
+    </Grid>
+    <Grid item>
+      <Link href="/register" variant="body2">
+        {"Don't have an account? Sign Up"}
+      </Link>
+    </Grid>
+  </Grid>
+)
+
+const Copyright = (props: any) => (
+  <Typography variant="body2" color="text.secondary" align="center" {...props}>
+    {'Copyright © '}
+    <Link color="inherit" href="https://github.com/sing3demons">
+      sing3demons
+    </Link>{' '}
+    {new Date().getFullYear()}
+    {'.'}
+  </Typography>
+)
