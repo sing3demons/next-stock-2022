@@ -10,14 +10,15 @@ interface UserState {
   user?: User
 }
 
+const name = 'user'
 const initialState: UserState = {
-  username: '',
+  username: 'sing',
   accessToken: '',
   isAuthenticated: false,
   isAuthenticating: true,
   user: undefined,
 }
+const reducers = {}
 
-const userSlice = createSlice({ name: 'user', initialState: {}, reducers: {} })
-
+const userSlice = createSlice({ name, initialState, reducers })
 export default userSlice.reducer
