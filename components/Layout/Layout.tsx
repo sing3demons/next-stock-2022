@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { ReactNode, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -15,15 +15,15 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   ...theme.mixins.toolbar,
 }))
 
-type LayoutProps = {
-  children: React.ReactNode
-}
-// interface LayoutProps {
+// type LayoutProps = {
 //   children: React.ReactNode
 // }
+interface LayoutProps {
+  children: ReactNode
+}
 
 export default function Layout({ children }: LayoutProps) {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = useState(false)
 
   const handleDrawerOpen = () => {
     setOpen(true)
