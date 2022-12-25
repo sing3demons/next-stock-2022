@@ -6,7 +6,9 @@ const reducer = {
   user: userReducer,
 }
 
-export const store = configureStore({ reducer, devTools: process.env.NODE_ENV === 'development' })
+const devTools = process.env.NODE_ENV === 'development'
+
+export const store = configureStore({ reducer, devTools })
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>
