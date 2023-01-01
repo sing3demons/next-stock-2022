@@ -25,11 +25,15 @@ const initialState: UserState = {
   user: undefined,
 }
 
-interface SignInAction {}
+interface SignAction {
+  username: string
+  password: string
+}
 
 const signUp = createAsyncThunk(
   'user/signup',
-  async (credential: any) => new Promise(resolve => setTimeout(() => resolve(credential), 1000))
+  async ({ username, password }: SignAction): Promise<any> =>
+    new Promise(resolve => setTimeout(() => resolve({ username }), 1000))
 )
 
 // export const userSelector = (store: RootState) => store.user
@@ -37,6 +41,8 @@ const userSelector = ({ user }: RootState) => user
 
 const extraReducers = (builder: ActionReducerMapBuilder<UserState>) => {
   builder.addCase(signUp.fulfilled, (state, action: PayloadAction<any>) => {
+    console.log(action.payload)
+
     state.username = action.payload.username
   })
 }
