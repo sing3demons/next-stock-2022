@@ -27,35 +27,29 @@ const initialState: UserState = {
 
 interface SignInAction {}
 
-const signUp = createAsyncThunk('user/signup', async (credential: any) => {
-  console.log(credential)
-
-  const p1 = new Promise(resolve => {
-    setTimeout(() => {
-      resolve(credential)
-    }, 1000)
-  })
-  return await p1
-})
-
-const extraReducers = (builder: ActionReducerMapBuilder<UserState>) => {}
+const signUp = createAsyncThunk(
+  'user/signup',
+  async (credential: any) => new Promise(resolve => setTimeout(() => resolve(credential), 1000))
+)
 
 // export const userSelector = (store: RootState) => store.user
 const userSelector = ({ user }: RootState) => user
 
+const extraReducers = (builder: ActionReducerMapBuilder<UserState>) => {
+  builder.addCase(signUp.fulfilled, (state, action: PayloadAction<any>) => {
+    state.username = action.payload.username
+  })
+}
+const reducers = {
+  setUsername: (state: UserState, action: PayloadAction<SingleProp>) => {
+    state.username = action.payload.username
+  },
+}
 const userSlice = createSlice({
   name,
   initialState,
-  reducers: {
-    setUsername: (state: UserState, action: PayloadAction<SingleProp>) => {
-      state.username = action.payload.username
-    },
-  },
-  extraReducers: (builder: ActionReducerMapBuilder<UserState>) => {
-    builder.addCase(signUp.fulfilled, (state, action: PayloadAction<any>) => {
-      state.username = action.payload.username
-    })
-  },
+  reducers,
+  extraReducers,
 })
 
 const { setUsername } = userSlice.actions
