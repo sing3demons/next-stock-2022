@@ -1,5 +1,11 @@
 import { User } from '@/models/user.model'
-import { ActionReducerMapBuilder, PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import {
+  ActionReducerMapBuilder,
+  PayloadAction,
+  ValidateSliceCaseReducers,
+  createAsyncThunk,
+  createSlice,
+} from '@reduxjs/toolkit'
 import { RootState } from '@/store/store'
 import * as services from '@/services/server.services'
 
@@ -31,25 +37,22 @@ interface SignAction {
   password: string
 }
 
-const signUp = createAsyncThunk('user/signup', async ({ username, password }: SignAction): Promise<any> => {
-  return await services.signUp({ username, password })
-})
+const signUp = createAsyncThunk(
+  'user/signup',
+  async ({ username, password }: SignAction): Promise<any> => await services.signUp({ username, password })
+)
 
 // export const userSelector = (store: RootState) => store.user
 const userSelector = ({ user }: RootState) => user
 
 const extraReducers = (builder: ActionReducerMapBuilder<UserState>) => {
-  builder.addCase(signUp.fulfilled, (state, action) => {
-    console.log(action.payload)
+  const signAction = (state: UserState, action: PayloadAction<SingleProp>) => {
+    state.username = action.payload.username
+  }
 
-    state.username = action.payload.result
-  })
+  builder.addCase(signUp.fulfilled, signAction)
 }
-// const reducers = {
-//   setUsername: (state: UserState, action: PayloadAction<SingleProp>) => {
-//     state.username = action.payload.username
-//   },
-// }
+
 const userSlice = createSlice({
   name,
   initialState,

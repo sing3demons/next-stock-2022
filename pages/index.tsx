@@ -15,7 +15,7 @@ const Index = (props: Props) => {
     <Layout>
       <div>name : {username}</div>
       <button onClick={() => dispatch(setUsername({ username: 'sing' }))}>Click</button>
-      <button onClick={() => dispatch(signUp({ username: 'admin', password: '1234' }))}>sign up </button>
+      {/* <button onClick={() => dispatch(signUp({ username: 'admin', password: '1234' }))}>sign up </button> */}
     </Layout>
   )
 }
