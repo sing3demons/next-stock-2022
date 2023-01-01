@@ -1,8 +1,10 @@
+import { useAppDispatch } from '@/store/hook'
 import { Box, Button, Card, CardContent, CardMedia, SxProps, Theme } from '@mui/material'
 import { Field, Form, Formik, FormikProps } from 'formik'
 import { TextField } from 'formik-material-ui'
 import { NextRouter, useRouter } from 'next/router'
 import React from 'react'
+import { userSelector, signUp } from '@/store/slices/userSlice'
 
 type Props = {}
 
@@ -13,6 +15,7 @@ interface RegisterForm {
 
 export default function register({}: Props) {
   const router = useRouter()
+  const dispatch = useAppDispatch()
 
   const sxBox: SxProps<Theme> = {
     display: 'flex',
@@ -24,13 +27,18 @@ export default function register({}: Props) {
 
   const initialValues: RegisterForm = { username: '', password: '' }
 
+  const onSubmit = async ({ username, password }: RegisterForm) => {
+    dispatch(signUp({ username, password }))
+    router.push('/login')
+  }
+
   return (
     <>
       <Box sx={sxBox}>
         <Card sx={{ maxWidth: 345 }}>
           <CardMedia sx={{ height: 200 }} image="/static/img/next_register.jpg" title="Contemplative Reptile" />
           <CardContent>
-            <Formik initialValues={initialValues} onSubmit={v => console.log(v)}>
+            <Formik initialValues={initialValues} onSubmit={values => onSubmit(values)}>
               {props => showForm(props, router)}
             </Formik>
           </CardContent>
