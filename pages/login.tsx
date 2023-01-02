@@ -12,11 +12,14 @@ import Typography from '@mui/material/Typography'
 import { createTheme, SxProps, Theme, ThemeProvider } from '@mui/material/styles'
 
 import { useForm, SubmitHandler, UseFormRegister, UseFormReturn } from 'react-hook-form'
+import { useAppDispatch } from '@/store/hook'
+import { signIn } from '@/store/slices/userSlice'
+import { useRouter } from 'next/router'
 
 const theme = createTheme()
 
 type Inputs = {
-  email: string
+  username: string
   password: string
 }
 
@@ -68,19 +71,29 @@ export default function login({}: Props) {
 }
 
 const FormLogin = ({ register, handleSubmit, errors, watch }: any) => {
-  const onSubmit: SubmitHandler<Inputs> = data => console.log(data)
+  const dispatch = useAppDispatch()
+  const router = useRouter()
+  const onSubmit: SubmitHandler<Inputs> = async ({ username, password }) => {
+    const response = await dispatch(signIn({ username, password }))
+    if (response.meta.requestStatus === 'rejected') {
+      alert('Login fail')
+      return
+    }
+
+     router.push('/')
+  }
   // console.log(watch('email'))
   // console.log(watch('password'))
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)} sx={{ mt: 1 }}>
-      {errors.email && <span style={{ color: 'red' }}>This field is required</span>}
+      {errors.username && <span style={{ color: 'red' }}>This field is required</span>}
       <TextField
         margin="normal"
         fullWidth
-        id="email"
+        id="username"
         label="Email Address"
-        {...register('email', { required: true })}
-        autoComplete="email"
+        {...register('username', { required: true })}
+        autoComplete="username"
         autoFocus
       />
       {errors.password && <span style={{ color: 'red' }}>This field is required</span>}

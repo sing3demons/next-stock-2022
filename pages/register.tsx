@@ -4,7 +4,7 @@ import { Field, Form, Formik, FormikProps } from 'formik'
 import { TextField } from 'formik-material-ui'
 import { NextRouter, useRouter } from 'next/router'
 import React from 'react'
-import { userSelector, signUp } from '@/store/slices/userSlice'
+import { signUp } from '@/store/slices/userSlice'
 
 type Props = {}
 
@@ -28,7 +28,12 @@ export default function register({}: Props) {
   const initialValues: RegisterForm = { username: '', password: '' }
 
   const onSubmit = async ({ username, password }: RegisterForm) => {
-    dispatch(signUp({ username, password }))
+    const response = await dispatch(signUp({ username, password }))
+    if (response.meta.requestStatus === 'rejected') {
+      alert('Register fail')
+      return
+    }
+
     router.push('/login')
   }
 

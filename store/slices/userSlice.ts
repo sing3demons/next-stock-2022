@@ -8,6 +8,8 @@ import {
 } from '@reduxjs/toolkit'
 import { RootState } from '@/store/store'
 import * as services from '@/services/server.services'
+import http from '@/utils/httpClient'
+import { AxiosRequestConfig } from 'axios'
 
 interface UserState {
   username: string
@@ -25,7 +27,7 @@ interface SingleProp {
 const name: 'user' = 'user'
 
 const initialState: UserState = {
-  username: 'aaa',
+  username: '',
   accessToken: '',
   isAuthenticated: false,
   isAuthenticating: true,
@@ -42,15 +44,42 @@ const signUp = createAsyncThunk(
   async ({ username, password }: SignAction): Promise<any> => await services.signUp({ username, password })
 )
 
+const signIn = createAsyncThunk('user/signin', async ({ username, password }: SignAction): Promise<any> => {
+  const response = await services.signIn({ username, password })
+  if (response.result !== 'ok') {
+    throw new Error('failed to sign in')
+  }
+
+  // set access token
+  http.interceptors.request.use((config: AxiosRequestConfig) => {
+    if (config && config.headers) {
+      config.headers.Authorization = `Bearer ${response.token}`
+    }
+
+    return config
+  })
+  return response
+})
+
 // export const userSelector = (store: RootState) => store.user
 const userSelector = ({ user }: RootState) => user
 
 const extraReducers = (builder: ActionReducerMapBuilder<UserState>) => {
-  const signAction = (state: UserState, action: PayloadAction<SingleProp>) => {
+  const signUpAction = (state: UserState, action: PayloadAction<SingleProp>) => {
+    state.accessToken = ''
+    state.isAuthenticated = false
+    state.user = undefined
+  }
+
+  const signInAction = (state: UserState, action: PayloadAction<SingleProp>) => {
+    state.accessToken = ''
+    state.isAuthenticated = false
+    state.user = undefined
     state.username = action.payload.username
   }
 
-  builder.addCase(signUp.fulfilled, signAction)
+  builder.addCase(signUp.fulfilled, signUpAction)
+  builder.addCase(signIn.fulfilled, signInAction)
 }
 
 const userSlice = createSlice({
@@ -66,5 +95,5 @@ const userSlice = createSlice({
 
 const { setUsername } = userSlice.actions
 
-export { signUp, userSelector, setUsername }
+export { signUp, userSelector, setUsername, signIn }
 export default userSlice.reducer
